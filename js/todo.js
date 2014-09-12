@@ -1,35 +1,35 @@
-var ntd = {};
+var todo = {};
 /** Read the new task and add it to the list */
-ntd.add = function(event) {
+todo.add = function(event) {
     // Read the task from the input
     var task=$('input').val();
     if (task) {
         // Add the task to array and refresh list
-        ntd.list[ntd.list.length] = task;
-        ntd.refresh_list();
+        todo.list[todo.list.length] = task;
+        todo.refresh_list();
         // Clear the input
         $('input').val('');
     }
-    event.preventDefault();
+    event.prevetodoefault();
 };
 /** Remove the task which was marked as selected */
-ntd.remove = function() {
+todo.remove = function() {
     // Remove from array and refresh list
-    ntd.list.splice(ntd.selected,1);
-    ntd.refresh_list();
+    todo.list.splice(todo.selected,1);
+    todo.refresh_list();
 };
 /** Recreate the entire list from the available list of tasks */
-ntd.refresh_list = function() {
+todo.refresh_list = function() {
     var $tasks = $('#task_list'), i;
     // Clear the existing task list
     $tasks.empty();
-    if (ntd.list.length) {
+    if (todo.list.length) {
         // Add the header
         $tasks.append('<li data-role="list-divider">To Do&#39;s</li>');
-        for (var i=0;i<ntd.list.length;i++){
+        for (var i=0;i<todo.list.length;i++){
             // Append each task
             var li = '<li><a data-rel="dialog" data-task="' + i
-                    + '" href="#confirm">' + ntd.list[i] + '</a></li>'
+                    + '" href="#confirm">' + todo.list[i] + '</a></li>'
             $tasks.append(li);
         }
     }
@@ -38,28 +38,28 @@ ntd.refresh_list = function() {
     // Use jQuery Mobile's listview method to refresh
     $tasks.listview('refresh');
     // Store back the list
-    localStorage.ntd_list = JSON.stringify(ntd.list || []);
+    localStorage.todo_list = JSON.stringify(todo.list || []);
 };
 
 // Initialize the index page
 $(document).delegate('#index','pageinit', function() {
     // If no list is already present, initialize it
-    if (!localStorage.ntd_list) {
-        localStorage.ntd_list = "[]";
+    if (!localStorage.todo_list) {
+        localStorage.todo_list = "[]";
     }
     // Load the list by parsing the JSON from localStorage
-    ntd.list = JSON.parse(localStorage.ntd_list);
-    $('#add').bind('vclick', ntd.add);
+    todo.list = JSON.parse(localStorage.todo_list);
+    $('#add').bind('vclick', todo.add);
     $('#task_list').on('vclick', 'li a', function() {
-        ntd.selected = $(this).data('task');
+        todo.selected = $(this).data('task');
     });
     // Refresh the list everytime the page is reloaded
-    $('#index').bind('pagebeforeshow', ntd.refresh_list);
+    $('#index').bind('pagebeforeshow', todo.refresh_list);
 });
 
 // Bind the 'Done' and 'Not Done' buttons to task removal
 $(document).delegate('#confirm', 'pageinit', function(){
-    $('.remove_task').bind('vclick', ntd.remove);
+    $('.remove_task').bind('vclick', todo.remove);
 });
 
 // Make the transition in reverse for the buttons on the done and notdone pages
